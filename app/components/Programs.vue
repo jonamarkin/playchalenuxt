@@ -1,0 +1,61 @@
+<script setup lang="ts">
+import type { Program } from '@/types'
+import { ChevronRight } from '@/components/ui/Icons'
+import ProgramCard from './ProgramCard.vue'
+
+const props = withDefaults(defineProps<{
+  programs: Program[]
+  detailsHref?: string
+}>(), {
+  detailsHref: '/discover'
+})
+
+const firstProgramId = computed(() => props.programs[0]?.id ?? 'programs')
+const lastProgramId = computed(() => props.programs[props.programs.length - 1]?.id ?? 'programs')
+</script>
+
+<template>
+  <section id="programs" class="pc-content-visibility py-20 md:py-40 px-6 md:px-12 bg-[#FDFDFB] overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-24 gap-8">
+        <div class="space-y-4">
+          <div class="inline-flex items-center gap-2 text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-black/30">
+            <span class="w-2 h-2 rounded-full bg-[#C6FF00]"></span>
+            TRAINING PROGRAMS
+          </div>
+          <h2 class="text-5xl md:text-8xl font-black text-[#111111] leading-[0.9] tracking-tighter">
+            Master the Court. <br class="hidden md:block" /> Every Step.
+          </h2>
+        </div>
+        
+        <div class="flex gap-4">
+          <a
+            :href="`#program-${firstProgramId}`"
+            class="w-16 h-16 rounded-full border-2 border-gray-100 flex items-center justify-center hover:bg-white hover:border-[#C6FF00] transition-all shadow-sm active:scale-90"
+          >
+            <div class="rotate-180">
+              <ChevronRight />
+            </div>
+          </a>
+          <a
+            :href="`#program-${lastProgramId}`"
+            class="w-16 h-16 rounded-full bg-black text-white flex items-center justify-center hover:bg-[#C6FF00] hover:text-black transition-all shadow-xl active:scale-90"
+          >
+            <ChevronRight />
+          </a>
+        </div>
+      </div>
+
+      <div class="flex overflow-x-auto gap-8 hide-scrollbar pb-16 -mx-6 px-6 snap-x snap-mandatory">
+        <div 
+          v-for="program in programs" 
+          :key="program.id" 
+          :id="`program-${program.id}`" 
+          class="snap-center shrink-0 scroll-mt-32"
+        >
+          <ProgramCard :program="program" :href="detailsHref" />
+        </div>
+      </div>
+    </div>
+  </section>
+</template>

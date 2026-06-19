@@ -1,0 +1,444 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Brand Constants */
+  --color-lime: #c6ff00;
+  --color-dark: #111111;
+  --color-beige: #f5f5f0;
+  --color-cream: #fdfdfb;
+  --pc-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --pc-ease-sport: cubic-bezier(0.16, 1, 0.3, 1);
+  --pc-ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --pc-duration-fast: 160ms;
+  --pc-duration-base: 240ms;
+  --pc-duration-slow: 420ms;
+
+  /* Shadcn Mappings (New York / Zinc-like but branded) */
+  --background: 0 0% 99%;
+  /* Matches Cream #FDFDFB approx */
+  --foreground: 0 0% 7%;
+  /* Matches Dark #111111 approx */
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 7%;
+  --primary: 74 100% 50%;
+  /* Matches Lime #C6FF00 exactly */
+  --primary-foreground: 0 0% 7%;
+  --secondary: 60 10% 96%;
+  /* Matches Beige */
+  --secondary-foreground: 0 0% 9%;
+  --muted: 60 10% 96%;
+  --muted-foreground: 0 0% 45%;
+  --accent: 60 10% 96%;
+  --accent-foreground: 0 0% 9%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 74 100% 50%;
+  /* Lime Ring */
+  --radius: 1.5rem;
+  /* Rounded corners */
+}
+
+.dark {
+  --background: 0 0% 7%;
+  /* Matches Dark */
+  --foreground: 0 0% 99%;
+  /* Matches Cream */
+  --card: 0 0% 7%;
+  --card-foreground: 0 0% 99%;
+  --popover: 0 0% 7%;
+  --popover-foreground: 0 0% 99%;
+  --primary: 74 100% 50%;
+  /* Lime */
+  --primary-foreground: 0 0% 7%;
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 64%;
+  --accent: 0 0% 15%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 15%;
+  --input: 0 0% 15%;
+  --ring: 74 100% 50%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: var(--color-cream);
+  overflow-x: hidden;
+}
+
+button,
+a[href],
+input,
+textarea,
+select {
+  transition-timing-function: var(--pc-ease-out);
+}
+
+button,
+a[href],
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Hide scrollbar utility */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Float animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pc-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pc-fade-left {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pc-fade-right {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pc-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pc-pop-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes pc-strike {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.pc-view-enter {
+  animation: pc-fade-up 320ms var(--pc-ease-out) both;
+}
+
+.pc-fade-left {
+  animation: pc-fade-left 320ms var(--pc-ease-out) both;
+}
+
+.pc-fade-right {
+  animation: pc-fade-right 320ms var(--pc-ease-out) both;
+}
+
+.pc-slide-panel {
+  animation: pc-slide-in 260ms var(--pc-ease-out) both;
+}
+
+.pc-toast-enter {
+  animation: pc-fade-up 220ms var(--pc-ease-out) both;
+}
+
+.pc-motion-enter {
+  animation: pc-motion-enter 220ms var(--pc-ease-out) both;
+  transition:
+    transform 220ms var(--pc-ease-out),
+    opacity 180ms ease-out,
+    width 520ms var(--pc-ease-out);
+}
+
+@keyframes pc-motion-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.pc-pop-in {
+  animation: pc-pop-in 280ms var(--pc-ease-snap) both;
+}
+
+.pc-energy-line {
+  transform-origin: left center;
+  animation: pc-strike 440ms var(--pc-ease-sport) both;
+}
+
+.pc-btn-press {
+  transform: translate3d(0, 0, 0) scale(1);
+  transition:
+    transform var(--pc-duration-fast) var(--pc-ease-sport),
+    box-shadow var(--pc-duration-base) ease-out,
+    background-color var(--pc-duration-fast) ease-out,
+    border-color var(--pc-duration-fast) ease-out,
+    color var(--pc-duration-fast) ease-out,
+    opacity var(--pc-duration-fast) ease-out;
+}
+
+.pc-btn-press:disabled,
+.pc-btn-press[aria-disabled="true"] {
+  transform: none;
+  will-change: auto;
+}
+
+.pc-card-lift {
+  transform: translate3d(0, 0, 0) scale(1);
+  transition:
+    transform var(--pc-duration-slow) var(--pc-ease-sport),
+    box-shadow var(--pc-duration-slow) ease-out,
+    background-color var(--pc-duration-base) ease-out,
+    border-color var(--pc-duration-base) ease-out,
+    color var(--pc-duration-fast) ease-out,
+    opacity var(--pc-duration-fast) ease-out;
+}
+
+.pc-choice-card {
+  transform: translate3d(0, 0, 0) scale(1);
+  transition:
+    transform var(--pc-duration-base) var(--pc-ease-snap),
+    background-color var(--pc-duration-base) ease-out,
+    border-color var(--pc-duration-base) ease-out,
+    color var(--pc-duration-fast) ease-out,
+    box-shadow var(--pc-duration-base) ease-out;
+}
+
+.pc-icon-kick {
+  transition: transform var(--pc-duration-base) var(--pc-ease-snap);
+}
+
+.pc-stagger > * {
+  animation: pc-fade-up 360ms var(--pc-ease-out) both;
+}
+
+.pc-stagger > *:nth-child(2) {
+  animation-delay: 45ms;
+}
+
+.pc-stagger > *:nth-child(3) {
+  animation-delay: 90ms;
+}
+
+.pc-stagger > *:nth-child(4) {
+  animation-delay: 135ms;
+}
+
+.pc-stagger > *:nth-child(5) {
+  animation-delay: 180ms;
+}
+
+.pc-stagger > *:nth-child(6) {
+  animation-delay: 225ms;
+}
+
+.pc-stagger > *:nth-child(n + 7) {
+  animation-delay: 270ms;
+}
+
+.pc-content-visibility {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 900px;
+}
+
+.pc-content-visibility-sm {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 520px;
+}
+
+.pc-render-contain {
+  contain: layout paint style;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (update: slow), (prefers-reduced-motion: reduce), (pointer: coarse) {
+  .glass {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+}
+
+/* ===== TOUCH OPTIMIZATION ===== */
+/* Disable hover effects on touch devices for snappier interactions */
+
+.touch-card,
+.pc-card-lift,
+.touch-scale,
+.touch-scale-sm,
+.pc-btn-press,
+.pc-choice-card {
+  transform: translate3d(0, 0, 0) scale(1);
+  transition:
+    transform 260ms var(--pc-ease-sport),
+    box-shadow 260ms ease-out,
+    background-color 200ms ease-out,
+    border-color 200ms ease-out,
+    color 160ms ease-out,
+    opacity 160ms ease-out;
+}
+
+/* Only apply hover transforms on devices that support hover */
+@media (hover: hover) and (pointer: fine) {
+  .touch-card:hover {
+    transform: translate3d(0, -8px, 0) scale(1.005);
+    will-change: transform;
+  }
+
+  .pc-card-lift:hover {
+    transform: translate3d(0, -7px, 0) scale(1.006);
+    will-change: transform;
+  }
+
+  .touch-scale:hover {
+    transform: translate3d(0, -2px, 0) scale(1.018);
+    will-change: transform;
+  }
+
+  .pc-btn-press:not(:disabled):not([aria-disabled="true"]):hover {
+    transform: translate3d(0, -1px, 0) scale(1.018);
+    will-change: transform;
+  }
+
+  .touch-scale-sm:hover {
+    transform: translate3d(0, -1px, 0) scale(1.035);
+    will-change: transform;
+  }
+
+  .pc-choice-card:hover {
+    transform: translate3d(0, -4px, 0) scale(1.025);
+    will-change: transform;
+  }
+
+  .group:hover .pc-icon-kick {
+    transform: translate3d(1px, -1px, 0) rotate(-4deg) scale(1.08);
+  }
+}
+
+/* Touch devices get instant active feedback instead */
+@media (hover: none) or (pointer: coarse) {
+
+  .touch-card:active,
+  .pc-card-lift:active,
+  .touch-scale:active,
+  .touch-scale-sm:active,
+  .pc-btn-press:not(:disabled):not([aria-disabled="true"]):active,
+  .pc-choice-card:active {
+    transform: translate3d(0, 0, 0) scale(0.975);
+    transition: transform 100ms ease-out;
+  }
+
+  /* Remove tap delay on iOS */
+  .touch-target {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Universal touch target class for all interactive elements */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pc-btn-press:not(:disabled):not([aria-disabled="true"]):active,
+.pc-choice-card:active {
+  transform: translate3d(0, 1px, 0) scale(0.975);
+}
