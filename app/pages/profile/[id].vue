@@ -4,8 +4,11 @@ import { useRoute, useRouter } from 'vue-router'
 import { TOP_PLAYERS } from '@/constants'
 import ProfileDashboard from '@/components/ProfileDashboard.vue'
 
+import { useUI } from '@/composables/useUI'
+
 const route = useRoute()
 const router = useRouter()
+const { openModal } = useUI()
 
 // Mocking authenticated user data for now
 const currentUser = computed(() => TOP_PLAYERS[0])
@@ -19,11 +22,15 @@ const playerData = computed(() => {
 })
 
 const onShareProfile = () => {
-  if (import.meta.client) {
-    const url = window.location.href
-    navigator.clipboard.writeText(url)
-    alert('PROFILE LINK COPIED TO CLIPBOARD')
-  }
+  if (playerData.value) openModal('share-profile', playerData.value)
+}
+
+const onEditProfile = () => {
+  if (playerData.value) openModal('edit-profile', playerData.value)
+}
+
+const onEditStats = () => {
+  if (playerData.value) openModal('stats', playerData.value)
 }
 
 const onViewMatch = (match: any) => {
@@ -38,6 +45,8 @@ const onViewMatch = (match: any) => {
       :player="playerData"
       :is-owner="isMe"
       @share-profile="onShareProfile"
+      @edit-profile="onEditProfile"
+      @edit-stats="onEditStats"
       @view-match="onViewMatch"
     />
     <div v-else class="min-h-screen flex items-center justify-center text-white">

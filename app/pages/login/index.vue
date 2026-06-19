@@ -9,35 +9,23 @@ const password = ref('')
 const isLoading = ref(false)
 const error = ref<string | null>(null)
 
-const handleLogin = async (e: Event) => {
+const handleLogin = (e: Event) => {
   e.preventDefault()
   isLoading.value = true
   error.value = null
 
-  try {
-    // Mock login delay
-    await new Promise(resolve => setTimeout(resolve, 800))
-    router.push('/home')
-  } catch (err: any) {
-    console.error('Login error:', err)
-    error.value = err.message || 'Failed to sign in'
-  } finally {
+  setTimeout(() => {
     isLoading.value = false
-  }
+    router.push('/home')
+  }, 1500)
 }
 
-const handleSocialAuth = async (provider: 'google') => {
+const handleSocialAuth = (provider: string) => {
   isLoading.value = true
-  try {
-    // Mock social auth delay
-    await new Promise(resolve => setTimeout(resolve, 800))
-    router.push('/home')
-  } catch (err: any) {
-    console.error('Social auth error:', err)
-    error.value = err.message
-  } finally {
+  setTimeout(() => {
     isLoading.value = false
-  }
+    router.push('/home')
+  }, 1500)
 }
 </script>
 
@@ -53,7 +41,7 @@ const handleSocialAuth = async (provider: 'google') => {
       <div class="text-center space-y-4">
         <div class="flex justify-center mb-6">
           <div class="scale-150">
-            <Logo :size="40" />
+            <Logo />
           </div>
         </div>
         <h1 class="text-4xl font-black italic tracking-tighter uppercase leading-none">
@@ -68,11 +56,9 @@ const handleSocialAuth = async (provider: 'google') => {
         <button
           @click="handleSocialAuth('google')"
           :disabled="isLoading"
-          class="w-full bg-white text-black p-4 rounded-full flex items-center justify-center gap-3 hover:bg-gray-200 transition-all font-bold text-sm uppercase tracking-wider relative overflow-hidden group"
+          class="w-full bg-white text-black p-4 rounded-full flex items-center justify-center gap-3 hover:bg-gray-200 transition-all font-bold text-sm uppercase tracking-wider relative overflow-hidden group disabled:opacity-50"
         >
-          <template v-if="isLoading">
-            <span class="opacity-50">Connecting...</span>
-          </template>
+          <span v-if="isLoading" class="opacity-50">Connecting...</span>
           <template v-else>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.908 3.152-1.928 4.172-1.224 1.224-3.136 2.584-6.392 2.584-5.112 0-9.216-4.144-9.216-9.256s4.104-9.256 9.216-9.256c2.784 0 4.888 1.104 6.384 2.504l2.312-2.312c-2.128-2.024-4.88-3.192-8.696-3.192-7.392 0-13.432 6.04-13.432 13.432s6.04 13.432 13.432 13.432c4.016 0 7.04-1.32 9.424-3.792 2.448-2.448 3.216-5.888 3.216-8.544 0-.816-.064-1.584-.2-2.312h-12.42z" /></svg>
             <span>Continue with Google</span>
@@ -92,7 +78,7 @@ const handleSocialAuth = async (provider: 'google') => {
               placeholder="Email Address"
               required
               v-model="email"
-              class="w-full bg-white/5 border-2 border-white/10 h-12 rounded-full px-6 focus:border-[#C6FF00] placeholder:text-white/20 outline-none text-white transition-colors"
+              class="w-full bg-white/5 border-2 border-white/10 h-12 rounded-full px-6 focus:border-[#C6FF00] placeholder:text-white/20 outline-none transition-all font-bold"
             />
           </div>
           <div class="space-y-2">
@@ -101,7 +87,7 @@ const handleSocialAuth = async (provider: 'google') => {
               placeholder="Password"
               required
               v-model="password"
-              class="w-full bg-white/5 border-2 border-white/10 h-12 rounded-full px-6 focus:border-[#C6FF00] placeholder:text-white/20 outline-none text-white transition-colors"
+              class="w-full bg-white/5 border-2 border-white/10 h-12 rounded-full px-6 focus:border-[#C6FF00] placeholder:text-white/20 outline-none transition-all font-bold"
             />
           </div>
 
@@ -112,7 +98,7 @@ const handleSocialAuth = async (provider: 'google') => {
           <button
             type="submit"
             :disabled="isLoading"
-            class="w-full h-12 flex items-center justify-center bg-[#C6FF00] hover:bg-[#b0ff00] text-black rounded-full font-black uppercase tracking-widest text-xs shadow-[0_0_20px_rgba(198,255,0,0.2)] disabled:opacity-50 transition-colors"
+            class="w-full h-12 bg-[#C6FF00] hover:bg-[#b0ff00] text-black rounded-full font-black uppercase tracking-widest text-xs shadow-[0_0_20px_rgba(198,255,0,0.2)] transition-all disabled:opacity-50"
           >
             {{ isLoading ? 'Signing In...' : 'Access Account' }}
           </button>
@@ -120,9 +106,9 @@ const handleSocialAuth = async (provider: 'google') => {
       </div>
 
       <div class="text-center">
-        <router-link to="/onboarding" class="text-white/40 hover:text-[#C6FF00] text-xs font-bold uppercase tracking-widest transition-colors">
+        <NuxtLink to="/onboarding" class="text-white/40 hover:text-[#C6FF00] text-xs font-bold uppercase tracking-widest transition-colors">
           New Athlete? <span class="text-white border-b border-white/20 pb-0.5">Start Draft</span>
-        </router-link>
+        </NuxtLink>
       </div>
     </div>
   </div>

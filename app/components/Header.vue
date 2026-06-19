@@ -4,8 +4,11 @@ import { useRouter, useRoute } from 'vue-router'
 import { Logo, Plus, Menu, X } from '@/components/ui/Icons'
 import { TOP_PLAYERS } from '@/constants'
 
+import { useUI } from '@/composables/useUI'
+
 const router = useRouter()
 const route = useRoute()
+const { openModal } = useUI()
 
 const isMenuOpen = ref(false)
 const scrolled = ref(false)
@@ -56,8 +59,7 @@ const onNavigate = (path: string) => {
 }
 
 const onOpenCreate = () => {
-  // Mock Create Game
-  alert('Open Create Game Modal')
+  openModal('create')
 }
 
 const signOut = () => {

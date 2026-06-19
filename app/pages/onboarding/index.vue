@@ -4,22 +4,21 @@ import Onboarding from '@/components/Onboarding.vue'
 
 const router = useRouter()
 
-const completeOnboarding = (data: any) => {
-  console.log('Onboarding Complete:', data)
-  // Mock login and redirect
-  router.push('/home')
+const handleComplete = (data: any) => {
+  console.log('Onboarding complete', data)
+  router.push('/discover')
 }
 
-const handleNavigate = (path: string) => {
-  router.push(path)
+const handleSkip = () => {
+  router.push('/discover')
 }
 </script>
 
 <template>
   <div class="pc-view-enter">
     <Onboarding 
-      @complete="completeOnboarding" 
-      @skip="handleNavigate('/discover')" 
+      @complete="handleComplete" 
+      @skip="handleSkip" 
     />
   </div>
 </template>

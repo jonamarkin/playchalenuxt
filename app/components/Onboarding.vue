@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Logo, ChevronRight, MapPin } from '@/components/ui/Icons'
 
-const props = defineProps<{
-  onComplete: (data: any) => void
-  onSkip: () => void
+const emit = defineEmits<{
+  (e: 'complete', data: any): void
+  (e: 'skip'): void
 }>()
 
 const step = ref(1)
@@ -34,7 +34,7 @@ const LEVELS = [
   { name: 'Competitive', label: 'Play to win', intensity: 'Pro' }
 ]
 
-const LEVEL_CONFIG: Record<string, { matches: string, rivals: string, grade: string, drive: string }> = {
+const LEVEL_CONFIG: Record<string, any> = {
   'Beginner': { matches: '0', rivals: '12', grade: 'Bronze', drive: 'Rookie' },
   'Intermediate': { matches: '24', rivals: '156', grade: 'Silver', drive: 'Semi-Pro' },
   'Competitive': { matches: '89', rivals: '482', grade: 'Gold', drive: 'Pro' }
@@ -43,72 +43,52 @@ const LEVEL_CONFIG: Record<string, { matches: string, rivals: string, grade: str
 const TOTAL_STEPS = 6
 
 const nextStep = () => {
-  step.value++
+  if (step.value < TOTAL_STEPS) step.value++
 }
 
 const prevStep = () => {
-  step.value = Math.max(1, step.value - 1)
-}
-
-const handleFinalSign = async (e: Event) => {
-  e.preventDefault()
-  isLoading.value = true
-
-  try {
-    await new Promise(resolve => setTimeout(resolve, 800))
-    props.onComplete({
-      name: data.value.name,
-      sports: data.value.sports,
-      level: data.value.level,
-      location: data.value.location,
-      email: data.value.email
-    })
-  } catch (error: any) {
-    console.error('Onboarding error:', error)
-    alert(error.message || 'Failed to sign up')
-  } finally {
-    isLoading.value = false
-  }
-}
-
-const handleSocialAuth = async (provider: 'google') => {
-  isLoading.value = true
-
-  try {
-    await new Promise(resolve => setTimeout(resolve, 800))
-    props.onComplete({
-      name: data.value.name || 'Google Athlete',
-      sports: data.value.sports.length ? data.value.sports : ['Football'],
-      level: data.value.level || 'Intermediate',
-      location: data.value.location || 'Accra',
-      email: data.value.email || `${provider}.athlete@playchale.app`
-    })
-  } catch (error: any) {
-    console.error('Social onboarding error:', error)
-  } finally {
-    isLoading.value = false
-  }
+  if (step.value > 1) step.value--
 }
 
 const toggleSport = (sport: string) => {
-  const index = data.value.sports.indexOf(sport)
-  if (index > -1) {
-    data.value.sports.splice(index, 1)
+  if (data.value.sports.includes(sport)) {
+    data.value.sports = data.value.sports.filter(s => s !== sport)
   } else {
     data.value.sports.push(sport)
   }
 }
 
-const onLocationEnter = (e: KeyboardEvent) => {
-  if (e.key === 'Enter' && data.value.location) {
-    nextStep()
-  }
+const handleFinalSign = (e: Event) => {
+  e.preventDefault()
+  setIsLoading(true)
+  setTimeout(() => {
+    setIsLoading(false)
+    emit('complete', data.value)
+  }, 1500)
 }
 
-const onNameEnter = (e: KeyboardEvent) => {
-  if (e.key === 'Enter' && data.value.name) {
-    nextStep()
-  }
+const handleSocialAuth = (provider: string) => {
+  setIsLoading(true)
+  setTimeout(() => {
+    setIsLoading(false)
+    data.value.name = data.value.name || 'Google Athlete'
+    data.value.sports = data.value.sports.length ? data.value.sports : ['Football']
+    data.value.level = data.value.level || 'Intermediate'
+    data.value.location = data.value.location || 'Accra'
+    emit('complete', data.value)
+  }, 1500)
+}
+
+const setIsLoading = (val: boolean) => {
+  isLoading.value = val
+}
+
+const handleLocationEnter = (e: KeyboardEvent) => {
+  if (e.key === 'Enter' && data.value.location) nextStep()
+}
+
+const handleNameEnter = (e: KeyboardEvent) => {
+  if (e.key === 'Enter' && data.value.name) nextStep()
 }
 </script>
 
@@ -123,7 +103,7 @@ const onNameEnter = (e: KeyboardEvent) => {
     <!-- Progress Bar -->
     <div class="absolute top-0 left-0 right-0 h-1.5 bg-white/5 flex z-50">
       <div
-        class="h-full bg-[#C6FF00] shadow-[0_0_20px_#C6FF00] transition-all duration-300"
+        class="h-full bg-[#C6FF00] shadow-[0_0_20px_#C6FF00] transition-all duration-500"
         :style="{ width: `${(step / TOTAL_STEPS) * 100}%` }"
       />
     </div>
@@ -135,22 +115,22 @@ const onNameEnter = (e: KeyboardEvent) => {
           @click="prevStep"
           class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all mr-2"
         >
-          <div class="rotate-180 scale-125"><ChevronRight class="w-5 h-5" /></div>
+          <div class="rotate-180 scale-125"><ChevronRight /></div>
         </button>
         <div class="flex items-center gap-3">
-          <Logo :size="32" />
+          <Logo />
           <span class="font-black text-xl md:text-2xl tracking-tighter italic uppercase">PRO DRAFT.</span>
         </div>
       </div>
       <div v-if="step < TOTAL_STEPS" class="flex items-center gap-4">
-        <router-link
+        <NuxtLink
           to="/login"
           class="text-[#C6FF00] text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] hover:text-white transition-colors border border-[#C6FF00]/30 px-4 py-2 rounded-full hover:bg-[#C6FF00]/10"
         >
           Sign In
-        </router-link>
+        </NuxtLink>
         <button
-          @click="onSkip"
+          @click="emit('skip')"
           class="text-white/40 text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] hover:text-white transition-colors"
         >
           Exit Draft
@@ -158,11 +138,11 @@ const onNameEnter = (e: KeyboardEvent) => {
       </div>
     </header>
 
-    <!-- Central Content Area -->
     <div class="flex-1 overflow-y-auto px-6 py-12 relative z-10 hide-scrollbar">
       <div class="max-w-6xl mx-auto flex flex-col items-center justify-center min-h-full">
         <Transition name="fade" mode="out-in">
-          <div v-if="step === 1" key="step1" class="w-full space-y-12 text-center pc-view-enter">
+          <!-- STEP 1 -->
+          <div v-if="step === 1" class="w-full space-y-12 text-center" key="step1">
             <div class="space-y-4">
               <span class="text-[10px] font-black uppercase tracking-[0.5em] text-[#C6FF00]">PHASE 01: ARENA</span>
               <h2 class="text-4xl md:text-9xl font-black italic tracking-tighter uppercase leading-[0.85]">Select your <br /> disciplines.</h2>
@@ -175,7 +155,10 @@ const onNameEnter = (e: KeyboardEvent) => {
                   v-for="s in SPORTS"
                   :key="s.name"
                   @click="toggleSport(s.name)"
-                  :class="['group border-2 p-6 md:p-10 rounded-[32px] md:rounded-[48px] hover:scale-105 transition-all duration-500 flex flex-col items-center gap-3 md:gap-6', data.sports.includes(s.name) ? 'bg-[#C6FF00] border-[#C6FF00] text-black scale-105' : 'bg-white/5 border-white/5 hover:bg-white/10 text-white']"
+                  :class="[
+                    'group border-2 p-6 md:p-10 rounded-[32px] md:rounded-[48px] hover:scale-105 transition-all duration-500 flex flex-col items-center gap-3 md:gap-6',
+                    data.sports.includes(s.name) ? 'bg-[#C6FF00] border-[#C6FF00] text-black scale-105' : 'bg-white/5 border-white/5 hover:bg-white/10 text-white'
+                  ]"
                 >
                   <span :class="['text-3xl md:text-5xl transition-transform', data.sports.includes(s.name) ? 'scale-125' : 'group-hover:scale-125']">{{ s.icon }}</span>
                   <span class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em]">{{ s.name }}</span>
@@ -192,7 +175,8 @@ const onNameEnter = (e: KeyboardEvent) => {
             </div>
           </div>
 
-          <div v-else-if="step === 2" key="step2" class="w-full space-y-12 text-center pc-view-enter">
+          <!-- STEP 2 -->
+          <div v-else-if="step === 2" class="w-full space-y-12 text-center" key="step2">
             <div class="space-y-4">
               <span class="text-[10px] font-black uppercase tracking-[0.5em] text-[#C6FF00]">PHASE 02: LEVEL</span>
               <h2 class="text-4xl md:text-9xl font-black italic tracking-tighter uppercase leading-[0.85]">What's your <br /> level?</h2>
@@ -212,7 +196,8 @@ const onNameEnter = (e: KeyboardEvent) => {
             </div>
           </div>
 
-          <div v-else-if="step === 3" key="step3" class="w-full space-y-12 text-center pc-view-enter">
+          <!-- STEP 3 -->
+          <div v-else-if="step === 3" class="w-full space-y-12 text-center" key="step3">
             <div class="space-y-4">
               <span class="text-[10px] font-black uppercase tracking-[0.5em] text-[#C6FF00]">PHASE 03: REGION</span>
               <h2 class="text-4xl md:text-9xl font-black italic tracking-tighter uppercase leading-[0.85]">Where do <br /> you play?</h2>
@@ -220,21 +205,22 @@ const onNameEnter = (e: KeyboardEvent) => {
 
             <div class="max-w-md mx-auto w-full px-4">
               <div class="relative group w-full">
-                <div class="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-[#C6FF00] transition-colors z-10"><MapPin class="w-6 h-6" /></div>
+                <div class="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-[#C6FF00] transition-colors z-10"><MapPin /></div>
                 <input
                   type="text"
                   placeholder="Enter your city..."
-                  class="w-full h-auto bg-white/5 border-2 border-white/10 rounded-full pl-16 pr-8 py-6 text-base md:text-xl font-black outline-none focus:border-[#C6FF00] transition-all text-white placeholder:text-white/20"
                   v-model="data.location"
-                  @keydown="onLocationEnter"
+                  @keydown="handleLocationEnter"
                   autofocus
+                  class="w-full bg-white/5 border-2 border-white/10 rounded-full pl-16 pr-8 py-6 text-base md:text-xl font-black outline-none focus:border-[#C6FF00] transition-all focus-visible:ring-0 placeholder:text-white/20"
                 />
               </div>
               <p class="mt-6 text-[10px] font-black uppercase tracking-[0.3em] text-white/20">Press enter to lock region</p>
             </div>
           </div>
 
-          <div v-else-if="step === 4" key="step4" class="w-full space-y-12 text-center pc-view-enter">
+          <!-- STEP 4 -->
+          <div v-else-if="step === 4" class="w-full space-y-12 text-center" key="step4">
             <div class="space-y-4">
               <span class="text-[10px] font-black uppercase tracking-[0.5em] text-[#C6FF00]">PHASE 04: IDENTITY</span>
               <h2 class="text-4xl md:text-9xl font-black italic tracking-tighter uppercase leading-[0.85]">The Athlete <br /> Signature.</h2>
@@ -248,18 +234,19 @@ const onNameEnter = (e: KeyboardEvent) => {
                 <input
                   type="text"
                   placeholder="Name or Username..."
-                  class="w-full h-auto bg-white/5 border-2 border-white/10 rounded-full pl-16 pr-8 py-6 text-base md:text-xl font-black outline-none focus:border-[#C6FF00] transition-all text-white placeholder:text-white/20"
                   v-model="data.name"
-                  @keydown="onNameEnter"
+                  @keydown="handleNameEnter"
                   autofocus
+                  class="w-full bg-white/5 border-2 border-white/10 rounded-full pl-16 pr-8 py-6 text-base md:text-xl font-black outline-none focus:border-[#C6FF00] transition-all focus-visible:ring-0 placeholder:text-white/20"
                 />
               </div>
               <p class="mt-6 text-[10px] font-black uppercase tracking-[0.3em] text-white/20">This is how you'll be known in the Arena</p>
             </div>
           </div>
 
-          <div v-else-if="step === 5" key="step5" class="w-full bg-white/5 border border-white/10 p-6 md:p-20 rounded-[40px] md:rounded-[80px] text-center space-y-8 md:space-y-12 relative overflow-hidden pc-view-enter">
-            <div class="absolute top-0 right-0 p-20 opacity-5 rotate-12 hidden md:block"><Logo :size="120" /></div>
+          <!-- STEP 5 -->
+          <div v-else-if="step === 5" class="w-full bg-white/5 border border-white/10 p-6 md:p-20 rounded-[40px] md:rounded-[80px] text-center space-y-8 md:space-y-12 relative overflow-hidden" key="step5">
+            <div class="absolute top-0 right-0 p-20 opacity-5 rotate-12 hidden md:block"><Logo /></div>
 
             <div class="space-y-4 md:space-y-6">
               <span class="bg-[#C6FF00] text-black px-4 md:px-6 py-2 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest">DRAFT REPORT: {{ data.name.toUpperCase() }}</span>
@@ -289,7 +276,8 @@ const onNameEnter = (e: KeyboardEvent) => {
             </div>
           </div>
 
-          <div v-else-if="step === 6" key="step6" class="max-w-2xl w-full flex flex-col items-center space-y-8 md:space-y-12 pc-view-enter">
+          <!-- STEP 6 -->
+          <div v-else-if="step === 6" class="max-w-2xl w-full flex flex-col items-center space-y-8 md:space-y-12 mx-auto" key="step6">
             <div class="text-center space-y-4">
               <span class="text-[10px] font-black uppercase tracking-[0.5em] text-[#C6FF00]">PHASE 06: COMMISSIONING</span>
               <h2 class="text-4xl md:text-7xl font-black italic tracking-tighter uppercase leading-[0.85]">Finalize <br /> Credentials.</h2>
@@ -300,9 +288,7 @@ const onNameEnter = (e: KeyboardEvent) => {
               <div class="w-16 h-16 border-4 border-white/10 border-t-[#C6FF00] rounded-full animate-spin"></div>
               <p class="text-[10px] font-black uppercase tracking-[0.3em] text-[#C6FF00] animate-pulse">Commissioning Athlete...</p>
             </div>
-            
             <div v-else class="w-full space-y-8 md:space-y-10">
-              <!-- Social Auth -->
               <div class="grid grid-cols-1 gap-4">
                 <button
                   @click="handleSocialAuth('google')"
@@ -326,8 +312,8 @@ const onNameEnter = (e: KeyboardEvent) => {
                     type="email"
                     required
                     placeholder="scout@academy.pro"
-                    class="w-full h-auto bg-white/5 border-2 border-white/5 focus:border-[#C6FF00] rounded-full px-8 py-5 text-base font-bold outline-none transition-all placeholder:text-white/20 focus-visible:ring-0 text-white"
                     v-model="data.email"
+                    class="w-full bg-white/5 border-2 border-white/5 focus:border-[#C6FF00] rounded-full px-8 py-5 text-base font-bold outline-none transition-all placeholder:text-white/20"
                   />
                 </div>
                 <div class="space-y-2">
@@ -336,14 +322,14 @@ const onNameEnter = (e: KeyboardEvent) => {
                     type="password"
                     required
                     placeholder="••••••••"
-                    class="w-full h-auto bg-white/5 border-2 border-white/5 focus:border-[#C6FF00] rounded-full px-8 py-5 text-base font-bold outline-none transition-all placeholder:text-white/20 focus-visible:ring-0 text-white"
                     v-model="data.password"
+                    class="w-full bg-white/5 border-2 border-white/5 focus:border-[#C6FF00] rounded-full px-8 py-5 text-base font-bold outline-none transition-all placeholder:text-white/20"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  class="w-full h-auto bg-white text-black py-6 rounded-full font-black uppercase tracking-widest text-[11px] shadow-2xl hover:bg-[#C6FF00] transition-all mt-6"
+                  class="w-full bg-white text-black py-6 rounded-full font-black uppercase tracking-widest text-[11px] shadow-2xl hover:bg-[#C6FF00] transition-all mt-6"
                 >
                   Commission Account
                 </button>
@@ -356,12 +342,9 @@ const onNameEnter = (e: KeyboardEvent) => {
               <div class="pt-6 text-center border-t border-white/5">
                 <p class="text-white/40 text-xs font-bold">
                   Already have an account?
-                  <router-link
-                    to="/login"
-                    class="text-[#C6FF00] hover:underline font-black uppercase tracking-wider"
-                  >
+                  <NuxtLink to="/login" class="text-[#C6FF00] hover:underline font-black uppercase tracking-wider ml-1">
                     Sign In
-                  </router-link>
+                  </NuxtLink>
                 </p>
               </div>
             </div>
@@ -369,21 +352,32 @@ const onNameEnter = (e: KeyboardEvent) => {
         </Transition>
       </div>
     </div>
+    
     <footer class="p-6 md:p-10 flex justify-center opacity-20 relative z-20 bg-gradient-to-t from-black to-transparent">
-      <p class="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-center">© 2025 PLAYCHALE ATHLETE MANAGEMENT SYSTEM</p>
+      <p class="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-center">© 2026 PLAYCHALE ATHLETE MANAGEMENT SYSTEM</p>
     </footer>
   </div>
 </template>
 
 <style scoped>
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
+
 .fade-enter-from {
   opacity: 0;
   transform: translateY(20px);
 }
+
 .fade-leave-to {
   opacity: 0;
   transform: translateY(-20px);
