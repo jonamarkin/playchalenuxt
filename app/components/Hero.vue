@@ -18,17 +18,7 @@ const nearbyGames = [
 <template>
   <section id="top" class="relative min-h-[90vh] md:min-h-screen bg-black text-white overflow-hidden rounded-b-[60px] md:rounded-b-[100px] z-10 flex flex-col justify-center">
     <!-- Navbar -->
-    <nav class="absolute top-0 left-0 right-0 px-6 pt-10 md:px-12 md:pt-12 flex justify-start items-center z-50">
-      <div 
-        v-motion
-        :initial="{ y: -20, opacity: 0 }"
-        :enter="{ y: 0, opacity: 1, transition: { duration: 800, delay: 100 } }"
-        class="flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer"
-      >
-        <Logo />
-        <span class="font-black text-2xl md:text-3xl tracking-tighter italic uppercase text-white drop-shadow-md">PlayChale.</span>
-      </div>
-    </nav>
+    <Header position="absolute" />
 
     <!-- Background Layer -->
     <div class="absolute inset-0 z-0">

@@ -4,8 +4,15 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
     '@nuxtjs/tailwindcss',
-    '@vueuse/motion/nuxt'
+    '@vueuse/motion/nuxt',
+    '@nuxtjs/google-fonts'
   ],
+  googleFonts: {
+    families: {
+      Inter: [400, 500, 700, 900]
+    },
+    display: 'swap',
+  },
   components: [
     {
       path: '~/components/ui',
