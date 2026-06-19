@@ -1,11 +1,25 @@
 
-import type { Game, PlayerProfile, Program, Testimonial } from './types';
+import type { Game, PlayerProfile, Program, Testimonial, Message } from './types';
 
 export const COLORS = {
   lime: '#C6FF00',
   beige: '#F5F5F0',
   dark: '#111111',
 };
+
+export const MESSAGES: Message[] = [
+  {
+    id: 'm1',
+    gameId: 'g1',
+    senderId: 'p2',
+    senderName: 'Elena R.',
+    senderAvatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=800',
+    content: "Hey, is there parking near Pitch 4? I'm coming with a big car.",
+    timestamp: '2h ago',
+    isRead: false,
+    type: 'inquiry'
+  }
+];
 
 export const GAMES: Game[] = [
   {
