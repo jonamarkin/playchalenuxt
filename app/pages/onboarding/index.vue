@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import Onboarding from '@/components/Onboarding.vue'
-import { useAuth } from '@/composables/useAuth'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
-const { completeOnboarding } = useAuth()
+const authStore = useAuthStore()
 
 const handleComplete = (data: any) => {
   console.log('Onboarding complete', data)
-  completeOnboarding(data)
+  authStore.completeOnboarding(data)
 }
 
 const handleSkip = () => {

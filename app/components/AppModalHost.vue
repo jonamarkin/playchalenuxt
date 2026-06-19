@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { useUI } from '@/composables/useUI'
-import { useAuth } from '@/composables/useAuth'
+import { useAuthStore } from '@/stores/auth'
+import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import GameModal from '@/components/GameModal.vue'
 import PostGameModal from '@/components/PostGameModal.vue'
 
 const { activeModal, selectedItem, closeModal } = useUI()
-const { user, hasProfile } = useAuth()
+const authStore = useAuthStore()
+const { user, hasProfile } = storeToRefs(authStore)
 const router = useRouter()
 
 const handleAuthCheck = () => {

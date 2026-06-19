@@ -1,12 +1,12 @@
+import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { TOP_PLAYERS } from '@/constants'
 
-const user = ref<any | null>(null)
-const hasProfile = ref(false)
-
-export const useAuth = () => {
+export const useAuthStore = defineStore('auth', () => {
   const router = useRouter()
+  const user = ref<any | null>(null)
+  const hasProfile = ref(false)
 
   const login = () => {
     // Mock login logic
@@ -50,4 +50,4 @@ export const useAuth = () => {
     completeOnboarding,
     setMissingProfile
   }
-}
+})

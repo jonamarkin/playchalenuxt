@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { TOP_PLAYERS } from '@/constants'
+import { useAuthStore } from '@/stores/auth'
+import { storeToRefs } from 'pinia'
 import ProfileDashboard from '@/components/ProfileDashboard.vue'
 
 import { useUI } from '@/composables/useUI'
@@ -9,8 +10,9 @@ import { useUI } from '@/composables/useUI'
 const router = useRouter()
 const { openModal } = useUI()
 
-// Mocking authenticated user data for now
-const currentUser = computed(() => TOP_PLAYERS[0])
+const authStore = useAuthStore()
+const { profile } = storeToRefs(authStore)
+const currentUser = computed(() => profile.value)
 
 const onShareProfile = () => {
   openModal('share-profile', currentUser.value)
@@ -30,7 +32,7 @@ const onViewMatch = (match: any) => {
 </script>
 
 <template>
-  <div class="pc-view-enter bg-black min-h-screen pt-24 md:pt-28">
+  <div class="pc-view-enter bg-black min-h-screen">
     <ProfileDashboard
       v-if="currentUser"
       :player="currentUser"

@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@lucide/vue": "^1.21.0",
+    "@pinia/nuxt": "^0.11.3",
     "@vueuse/core": "^14.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "nuxt": "^4.4.8",
+    "pinia": "^3.0.4",
     "radix-vue": "^1.9.17",
     "reka-ui": "^2.9.10",
     "tailwind-merge": "^3.6.0",

@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 import { GAMES } from '@/constants'
 import { ChevronRight, getSportIcon } from '@/components/ui/Icons'
 
 const route = useRoute()
 const router = useRouter()
-const { user, hasProfile } = useAuth()
+const authStore = useAuthStore()
+const { user, hasProfile } = storeToRefs(authStore)
 
 const game = computed(() => GAMES.find(g => g.id === route.params.id))
 

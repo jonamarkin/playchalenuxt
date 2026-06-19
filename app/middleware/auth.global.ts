@@ -1,7 +1,9 @@
-import { useAuth } from '@/composables/useAuth'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 
 export default defineNuxtRouteMiddleware((to, from) => {
-  const { user, hasProfile } = useAuth()
+  const authStore = useAuthStore()
+  const { user, hasProfile } = storeToRefs(authStore)
 
   const publicRoutes = ['/', '/login', '/onboarding', '/discover']
   const isPublic = publicRoutes.includes(to.path) || 

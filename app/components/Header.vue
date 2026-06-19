@@ -4,13 +4,16 @@ import { useRouter, useRoute } from 'vue-router'
 import { Logo, Plus, Menu, X } from '@/components/ui/Icons'
 import { TOP_PLAYERS } from '@/constants'
 
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 import { useUI } from '@/composables/useUI'
-import { useAuth } from '@/composables/useAuth'
 
 const router = useRouter()
 const route = useRoute()
 const { openModal } = useUI()
-const { user, profile, logout } = useAuth()
+
+const authStore = useAuthStore()
+const { user, profile } = storeToRefs(authStore)
 
 const isMenuOpen = ref(false)
 const scrolled = ref(false)
@@ -133,40 +136,53 @@ const signOut = () => {
       </div>
     </header>
 
-    <div
-      v-if="isMenuOpen"
-      class="pc-slide-panel fixed inset-0 z-[110] bg-black text-white flex flex-col p-8 pt-32"
-    >
-      <div class="flex justify-between items-center absolute top-8 left-8 right-8">
-        <div class="flex items-center gap-4 cursor-pointer" @click="onNavigate('/')">
-          <Logo />
-          <span class="font-black text-2xl tracking-tighter italic uppercase">PLAYCHALE.</span>
+    <Transition name="slide-panel">
+      <div
+        v-if="isMenuOpen"
+        class="fixed inset-0 z-[110] bg-black text-white flex flex-col p-8 pt-32"
+      >
+        <div class="flex justify-between items-center absolute top-8 left-8 right-8">
+          <div class="flex items-center gap-4 cursor-pointer" @click="onNavigate('/')">
+            <Logo />
+            <span class="font-black text-2xl tracking-tighter italic uppercase">PLAYCHALE.</span>
+          </div>
+          <button @click="isMenuOpen = false" class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-colors">
+            <X class="w-5 h-5" />
+          </button>
         </div>
-        <button @click="isMenuOpen = false" class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
-          <X class="w-5 h-5" />
-        </button>
-      </div>
 
-      <div class="space-y-8 mt-12 overflow-y-auto">
-        <button
-          v-for="(item, idx) in navItems"
-          :key="item.id"
-          @click="onNavigate(item.path)"
-          class="block text-5xl md:text-7xl font-black italic tracking-tighter hover:text-[#C6FF00] transition-all text-left group w-full"
-        >
-          <span class="text-xs not-italic opacity-30 mr-6">0{{ idx + 1 }}</span>
-          {{ item.label }}
-        </button>
+        <div class="space-y-8 mt-12 overflow-y-auto pc-stagger">
+          <button
+            v-for="(item, idx) in navItems"
+            :key="item.id"
+            @click="onNavigate(item.path)"
+            class="block text-5xl md:text-7xl font-black italic tracking-tighter hover:text-[#C6FF00] transition-all text-left group"
+          >
+            <span class="text-xs not-italic opacity-30 mr-6">0{{ idx + 1 }}</span>
+            {{ item.label }}
+          </button>
 
-        <button
-          v-if="user"
-          @click="signOut"
-          class="block text-5xl md:text-7xl font-black italic tracking-tighter text-red-500 hover:text-red-400 transition-all text-left mt-8 group w-full"
-        >
-          <span class="text-xs not-italic opacity-30 mr-6 text-white">0{{ navItems.length + 1 }}</span>
-          Log Out
-        </button>
+          <button
+            v-if="user"
+            @click="signOut"
+            class="block text-5xl md:text-7xl font-black italic tracking-tighter text-red-500 hover:text-red-400 transition-all text-left mt-8 group"
+          >
+            <span class="text-xs not-italic opacity-30 mr-6 text-white">0{{ navItems.length + 1 }}</span>
+            Log Out
+          </button>
+        </div>
       </div>
-    </div>
+    </Transition>
   </div>
 </template>
+
+<style scoped>
+.slide-panel-enter-active,
+.slide-panel-leave-active {
+  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.slide-panel-enter-from,
+.slide-panel-leave-to {
+  transform: translateX(100%);
+}
+</style>
