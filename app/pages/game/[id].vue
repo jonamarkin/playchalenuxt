@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 import { GAMES } from '@/constants'
 import { ChevronRight, getSportIcon } from '@/components/ui/Icons'
 
 const route = useRoute()
 const router = useRouter()
+const { user, hasProfile } = useAuth()
 
 const game = computed(() => GAMES.find(g => g.id === route.params.id))
 
@@ -13,6 +15,15 @@ const loading = ref(false)
 const hasJoined = ref(false)
 
 const handleJoin = () => {
+  if (!user.value) {
+    router.push('/login')
+    return
+  }
+  if (!hasProfile.value) {
+    router.push('/onboarding')
+    return
+  }
+
   if (hasJoined.value) return
   loading.value = true
   setTimeout(() => {

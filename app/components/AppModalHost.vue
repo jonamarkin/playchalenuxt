@@ -1,18 +1,39 @@
 <script setup lang="ts">
 import { useUI } from '@/composables/useUI'
+import { useAuth } from '@/composables/useAuth'
+import { useRouter } from 'vue-router'
 import GameModal from '@/components/GameModal.vue'
 import PostGameModal from '@/components/PostGameModal.vue'
 
 const { activeModal, selectedItem, closeModal } = useUI()
+const { user, hasProfile } = useAuth()
+const router = useRouter()
+
+const handleAuthCheck = () => {
+  if (!user.value) {
+    closeModal()
+    router.push('/login')
+    return false
+  }
+  if (!hasProfile.value) {
+    closeModal()
+    router.push('/onboarding')
+    return false
+  }
+  return true
+}
 
 const handleCreate = (gameData: any) => {
+  if (!handleAuthCheck()) return
   console.log('Creating game', gameData)
   // Mock API call
 }
 
 const handleJoin = (gameId: string) => {
+  if (!handleAuthCheck()) return
   console.log('Joining game', gameId)
-  // Mock API call
+  alert('JOIN REQUEST SENT!')
+  closeModal()
 }
 
 const handleUpdateProfile = (playerId: string, data: any) => {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { Logo } from '@/components/ui/Icons'
+import { useAuth } from '@/composables/useAuth'
 
 const router = useRouter()
+const { login } = useAuth()
 const email = ref('')
 const password = ref('')
 const isLoading = ref(false)
@@ -16,7 +16,7 @@ const handleLogin = (e: Event) => {
 
   setTimeout(() => {
     isLoading.value = false
-    router.push('/home')
+    login()
   }, 1500)
 }
 
@@ -24,7 +24,7 @@ const handleSocialAuth = (provider: string) => {
   isLoading.value = true
   setTimeout(() => {
     isLoading.value = false
-    router.push('/home')
+    login()
   }, 1500)
 }
 </script>

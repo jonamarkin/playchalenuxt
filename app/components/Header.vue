@@ -5,16 +5,15 @@ import { Logo, Plus, Menu, X } from '@/components/ui/Icons'
 import { TOP_PLAYERS } from '@/constants'
 
 import { useUI } from '@/composables/useUI'
+import { useAuth } from '@/composables/useAuth'
 
 const router = useRouter()
 const route = useRoute()
 const { openModal } = useUI()
+const { user, profile, logout } = useAuth()
 
 const isMenuOpen = ref(false)
 const scrolled = ref(false)
-
-// For mock purposes
-const user = computed(() => TOP_PLAYERS[0])
 
 const handleScroll = () => {
   scrolled.value = window.scrollY > 50
@@ -106,6 +105,7 @@ const signOut = () => {
 
       <div class="pc-fade-right flex items-center gap-2 md:gap-3">
         <button
+          v-if="user"
           @click="onOpenCreate"
           :class="['transition-all duration-300 px-3 sm:px-5 md:px-7 py-2 md:py-2.5 rounded-full flex items-center gap-2 md:gap-3 group shadow-lg', headerTheme === 'light' ? 'bg-black text-white hover:bg-[#C6FF00] hover:text-black' : 'bg-[#C6FF00] text-black hover:bg-white']"
         >
@@ -114,6 +114,14 @@ const signOut = () => {
             <Plus class="w-4 h-4" />
           </div>
         </button>
+
+        <NuxtLink
+          v-else
+          to="/login"
+          :class="['transition-all duration-300 px-4 sm:px-6 py-2 md:py-2.5 rounded-full flex items-center shadow-lg text-[10px] md:text-xs font-black uppercase tracking-widest', headerTheme === 'light' ? 'bg-black text-[#C6FF00] hover:bg-[#C6FF00] hover:text-black' : 'bg-transparent border border-[#C6FF00]/50 text-[#C6FF00] hover:bg-[#C6FF00] hover:text-black']"
+        >
+          Sign In
+        </NuxtLink>
 
         <button
           @click="isMenuOpen = !isMenuOpen"
